@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+
+<body>
+    <!-- Heading -->
+    <h3> User Details </h3>
+
+    <!-- HTML form -->
+    
+    <table>
+    {% for key,value in result.items() %}
+        <tr>
+            <th> {{key}} </th>
+            <td> {{value}} </td>
+            
+        </tr>
+        <tr>
+
+    {% endfor %}
+    </table>
+    
+    </body>
+
+</html>
