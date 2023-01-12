@@ -1,18 +1,30 @@
+"""""""""""""""""""""""""""""""""""""""""""""""""MAIN  APP FILE"""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 import os
 from celery import Celery
+from dotenv import load_dotenv
+from flask_caching import Cache
+
+load_dotenv()
 
 app= Flask(__name__)
 
 app.secret_key = 'otp'
 
-app.config['SECRET_KEY'] = "secretkey"
+cache = Cache()
 
-app.config['SQLALCHEMY_DATABASE_URI'] = "postgresql://abc:root@localhost/mydatabase"
-app.config['CELERY_BROKER_URL']="redis://localhost:6379/0"
-app.config['CELERY_RESULT_BACKEND']="redis://localhost:6379/0"
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('SQLALCHEMY_DATABASE_URI')
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
+app.config['CELERY_BROKER_URL'] = os.getenv('CELERY_BROKER_URL')
+app.config['CELERY_RESULT_BACKEND'] = os.getenv('CELERY_RESULT_BACKEND')
+app.config["CACHE_TYPE"] = "SimpleCache"
+
+cache.init_app(app)
+
 
 def make_celery(app):
     celery = Celery(
@@ -28,7 +40,8 @@ def make_celery(app):
 
     celery.Task = ContextTask  # Creating a celery task runnable
     return celery
-
+app.app_context().push()
+app.test_request_context().push()
 celery = make_celery(app)
 
 
@@ -42,5 +55,4 @@ from src.views.routes import app1
 app.register_blueprint(app1, url_prefix = "")
 
 if __name__== '__main__':
-    print(__name__)
     app.run()

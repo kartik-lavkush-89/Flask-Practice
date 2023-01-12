@@ -1,12 +1,16 @@
+"""""""""""""""""""""""""""""""""""""""""""""""""DATABASE  MODELS"""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
 from app import db
+import datetime
 from marshmallow import Schema, fields
+from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
 
 class Table(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     fname = db.Column(db.String(40), nullable=False)
     lname = db.Column(db.String(40), nullable=False)
-    email = db.Column(db.String(40), nullable=False)
-    phone = db.Column(db.String(20), nullable = False)
+    email = db.Column(db.String(40), unique =True, nullable=False)
+    phone = db.Column(db.String(20), unique=True,nullable = False)
     password = db.Column(db.String(1000), nullable=False)
 
     def __init__(self,fname,lname,email,phone,password) :
@@ -14,19 +18,32 @@ class Table(db.Model):
         self.lname = lname
         self.email = email
         self.phone = phone
-        self.password = password  
+        self.password = password 
 
-       
-class UserSchema(Schema):
+    def to_json(self):
+        return {'id': self.id,'fname': self.fname, 'lname': self.lname,'email': self.email,'phone':self.phone , 
+                'password':self.password 
+                }
+        
+        with self.app.app_context():
+            db.session.close()
+            db.drop_all()
+            db.create_all()
+
+class UserSchema(SQLAlchemyAutoSchema):
     fname = fields.String()
     lname = fields.String()
     email = fields.String()
     phone = fields.String()
+ 
+
 
 class Otp(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     phone = db.Column(db.String, nullable = False)
     otp = db.Column(db.String(20), nullable = False)  
+    expiry = db.Column(db.TIMESTAMP(timezone=True))
+    created_at = db.Column(db.TIMESTAMP(timezone = True),default = datetime.datetime.utcnow())
 
     def __init__(self,phone,otp) :
         self.phone = phone
@@ -39,6 +56,12 @@ class Otp(db.Model):
             db.session.close()
             db.drop_all()
             db.create_all()
+
+class OtpSchema(SQLAlchemyAutoSchema):
+    class Meta:
+        model = Otp
+
+
 
 class Email(db.Model):
     id = db.Column(db.Integer, primary_key = True)
