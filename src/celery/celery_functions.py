@@ -19,7 +19,6 @@ load_dotenv()
 """Smaple Celery task to check celery performation"""
 @celery.task(name='app.add_together')
 def add_together(a, b):
-    print('In Celery TAsk')
     return a + b
 
 """CELERY  Tasks"""
