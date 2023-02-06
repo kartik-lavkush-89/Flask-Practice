@@ -71,7 +71,7 @@ class Pdf(MethodView) :
     @token_required
     def get(self):
         result = UserSchema().dump(g.user)
-        pdf = pdfkit.from_string(render_template('index.html',result = result),f'D:\one more pdf/{f"info_{str(random.randrange(000000,999999))}.pdf"}',configuration= pdfkit.configuration(wkhtmltopdf=r"C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe"))
+        pdf = pdfkit.from_string(render_template('index.html',result = result),f'D:\Flask Practice\one_more_generated_pdf/{f"info_{str(random.randrange(000000,999999))}.pdf"}',configuration= pdfkit.configuration(wkhtmltopdf=r"C:\Program Files\wkhtmltopdf\bin\wkhtmltopdf.exe"))
         make_pdf.delay(result,pdf)
         return jsonify({"Message" : "PDF created"})
 
