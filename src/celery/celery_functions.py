@@ -41,9 +41,9 @@ def send_otp(phone,otp):
 """Task to send OTP on User's Email ID"""
 @celery.task(name='app.send_mail')
 def send_mail(email,otp):
-    sg = SendGridAPIClient("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")
+    sg = SendGridAPIClient(os.getenv("SG_API_KEY"))
     message = Mail(
-                    from_email="kartik.lavkush@unthinkable.co",
+                    from_email="youremail@gmail.com",
                     to_emails= email,
                     subject='OTP Verification Code ',
                     html_content = "Your OTP for reset password - " + str(otp)
