@@ -33,7 +33,7 @@ def send_otp(phone,otp):
     client = Client(account_sid, auth_token)
     message = client.messages.create(
                     body="Hello! Your otp for registration is - " + str(otp),
-                    from_="+16086022741",
+                    from_="your twilio number : +1......",
                     to ='+91' + str(phone)
                 )
 
